@@ -43,8 +43,17 @@ if(NOT xrceagent_FOUND)
                 -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
                 -DCMAKE_PREFIX_PATH:PATH=<INSTALL_DIR>
                 -DCMAKE_SYSTEM_NAME:STRING=${CMAKE_SYSTEM_NAME}
-                -DUAGENT_USE_SYSTEM_FASTDDS:BOOL=ON
-                -DUAGENT_USE_SYSTEM_FASTCDR:BOOL=ON
+                # Humble's apt repo only ships fastcdr 1.0.29, but this pinned
+                # Micro-XRCE-DDS-Agent version (v2.4.2) requires fastcdr 2.x -
+                # a real ecosystem version gap (Humble/2022 predates the
+                # Fast-DDS 2.x/fastcdr 2.x generation that Jazzy/2024 ships).
+                # Building our own isolated copy instead of relying on the
+                # system one sidesteps the conflict entirely: different major
+                # versions carry different sonames (libfastcdr.so.1 vs .so.2),
+                # so this vendored copy coexists fine alongside whatever
+                # rmw_fastrtps_cpp links against system-side.
+                -DUAGENT_USE_SYSTEM_FASTDDS:BOOL=OFF
+                -DUAGENT_USE_SYSTEM_FASTCDR:BOOL=OFF
                 -DUAGENT_USE_SYSTEM_LOGGER:BOOL=${UAGENT_USE_SYSTEM_LOGGER}
                 -DUAGENT_CED_PROFILE:BOOL=OFF
                 -DUAGENT_P2P_PROFILE:BOOL=OFF
