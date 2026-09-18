@@ -27,6 +27,14 @@ if(NOT xrceagent_FOUND)
                 https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
             GIT_TAG
                 v2.4.2
+            PATCH_COMMAND
+                # eProsima has since deleted the "2.12.x" moving branch from
+                # Fast-DDS that this pinned v2.4.2 tag's CMakeLists.txt
+                # hardcodes as `_fastdds_tag`, so cloning it now fails with
+                # "invalid reference: 2.12.x". Repoint it at the latest real
+                # 2.12 release tag, which still satisfies UAGENT's "2.12"
+                # compatibility requirement.
+                sed -i "s/set(_fastdds_tag 2.12.x)/set(_fastdds_tag v2.12.2)/" <SOURCE_DIR>/CMakeLists.txt
             PREFIX
                 ${PROJECT_BINARY_DIR}/agent
             INSTALL_DIR
